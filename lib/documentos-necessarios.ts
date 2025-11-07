@@ -4,14 +4,14 @@
 export const documentosNecessarios: Record<string, string[]> = {
   reciproca: [
     "Documento oficial que comprove a natureza jurídica do ente federativo",
-    "Documentação que comprove a propriedade, posse ou titularidade do bem ou serviço",
+    "Documentação que comprove a propriedade, posse ou titularidade do bem ou serviço (inteiro teor atual, contrato de compra/venda...)",
     "Declaração de que o patrimônio, renda ou serviços estão vinculados às finalidades essenciais ou delas decorrentes",
   ],
   
   templos: [
     "Ato constitutivo da entidade religiosa (estatuto social, ata de fundação, etc.) devidamente registrado",
     "Comprovante de inscrição no CNPJ",
-    "Documentação que comprove a propriedade, posse ou titularidade do bem imóvel (matrícula do imóvel, contrato de locação, etc.)",
+    "Documentação que comprove a propriedade, posse ou titularidade do bem imóvel (inteiro teor atual, contrato de compra ou locação, etc.)",
     "Declaração de que o patrimônio, renda ou serviços estão relacionados às finalidades essenciais do templo",
   ],
   
@@ -19,10 +19,10 @@ export const documentosNecessarios: Record<string, string[]> = {
     "Ato constitutivo da entidade (estatuto social, ata de fundação, etc.) devidamente registrado",
     "Comprovante de inscrição no CNPJ",
     "Documentação que comprove a propriedade, posse ou titularidade do bem ou serviço",
-    "Documentos contábeis que comprovem:",
-    "• Não distribuição de patrimônio ou rendas",
-    "• Aplicação integral dos recursos no País",
-    "• Manutenção de escrituração de receitas e despesas",
+    "Documentos contábeis dos últimos dois anos (DRE sintético, plano de contas, balanço, balancete etc.) que comprovem:",
+    "Não distribuição de patrimônio ou rendas",
+    "Aplicação integral dos recursos no País",
+    "Manutenção de escrituração de receitas e despesas",
     "Declaração de que o patrimônio está vinculado às finalidades essenciais",
     "Para Instituições de Educação/Assistência Social: Certificado CEBAS ou documento equivalente (quando aplicável)",
   ],

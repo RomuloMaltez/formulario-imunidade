@@ -43,7 +43,7 @@ export const ReciprocaFields: React.FC<ReciprocaFieldsProps> = ({ register, erro
           label="Endereço do Imóvel (se aplicável)"
           {...register('enderecoImovel')}
           error={errors.enderecoImovel?.message as string}
-          placeholder="Endereço completo do imóvel. Se houver múltiplos imóveis, liste todos."
+          placeholder="Endereço completo do imóvel com a respectiva inscrição municipal. Se houver múltiplos imóveis, liste todos."
           rows={3}
         />
 

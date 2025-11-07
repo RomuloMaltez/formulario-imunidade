@@ -28,7 +28,7 @@ export const TemplosFields: React.FC<TemplosFieldsProps> = ({ register, errors }
           label="Endereço do Imóvel *"
           {...register('enderecoImovel')}
           error={errors.enderecoImovel?.message as string}
-          placeholder="Endereço completo do imóvel onde funciona o templo. Se houver múltiplos imóveis, liste todos."
+          placeholder="Endereço completo do imóvel onde funciona o templo com sua inscrição municipal. Se houver múltiplos imóveis, liste todos."
           rows={3}
         />
 
