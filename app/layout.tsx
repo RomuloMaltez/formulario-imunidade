@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Sistema de Imunidade Tributária - Porto Velho',
   description: 'Sistema de Solicitação de imunidade tributária do Município de Porto Velho - IN 001/2025',
+  icons: {
+    icon: '/imagem_icon-removebg-preview.png',
+  },
 };
 
 export default function RootLayout({

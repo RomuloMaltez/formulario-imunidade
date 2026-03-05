@@ -55,20 +55,20 @@ export default function FormularioPage() {
 
   const onSubmit = async (data: any) => {
     setIsGenerating(true);
-    
+
     try {
       // Adicionar o tipo ao objeto de dados
       const dadosCompletos = {
         ...data,
         tipo: tipo,
       };
-      
+
       // Gerar o PDF
-      gerarPDFRequerimento(dadosCompletos);
-      
+      await gerarPDFRequerimento(dadosCompletos);
+
       // Feedback visual
       alert('PDF gerado com sucesso! Verifique seus downloads.');
-      
+
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
@@ -87,7 +87,7 @@ export default function FormularioPage() {
               ← Voltar
             </Button>
           </Link>
-          
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {titulos[tipo]}
@@ -113,19 +113,19 @@ export default function FormularioPage() {
             {tipo === 'reciproca' && (
               <ReciprocaFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'templos' && (
               <TemplosFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'partidos' && (
               <PartidosFields register={register} errors={errors} watch={watch} />
             )}
-            
+
             {tipo === 'livros' && (
               <LivrosFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'fonogramas' && (
               <FonogramasFields register={register} errors={errors} />
             )}
@@ -141,9 +141,9 @@ export default function FormularioPage() {
                 >
                   Cancelar
                 </Button>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   variant="primary"
                   disabled={isGenerating}
                 >
