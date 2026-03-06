@@ -143,13 +143,13 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
   // Desenhar caixa colorida para seções
   const desenharCaixaSecao = (y: number, altura: number, destaque: boolean = false) => {
     if (destaque) {
-      doc.setFillColor(...coresTipo.clara);
+      doc.setFillColor(...coresTipo.blackfull);
       doc.setDrawColor(...coresTipo.blackfull);
       doc.setLineWidth(0.5);
-      doc.roundedRect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 0.5, 0.5, 'FD');
+      doc.rect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 'FD');
     } else {
       doc.setFillColor(...COR_CINZA_CLARO);
-      doc.roundedRect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 0.5, 0.5, 'F');
+      doc.rect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 'F');
     }
   };
 
@@ -177,32 +177,40 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
 
     if (destaque) {
       // Caixa de destaque para o título
-      desenharCaixaSecao(currentY, 12, true);
+      desenharCaixaSecao(currentY + 1, 7, true);
     }
 
     // Titulo da seção em preto
-    doc.setFontSize(14);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...coresTipo.blackfull);
+    doc.setTextColor(255, 255, 255);
     // Apenas o título, sem símbolo
-    doc.text(titulo, margin, currentY + 2, { baseline: 'middle' });
-    currentY += 10;
+    doc.text(titulo, margin, currentY, { baseline: 'middle' });
+    currentY += 8;
   };
 
   // Adicionar campo com label e valor
   const addField = (label: string, valor: string) => {
     checkPageBreak(10);
-    doc.setFontSize(10);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...COR_CINZA);
+    doc.setTextColor(0, 0, 0);
     doc.text(`${label}:`, margin, currentY);
-    currentY += 5;
+
+    const labelWidth = doc.getTextWidth(`${label}:`);
+    const valoPosx = margin + labelWidth + 2;
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(0, 0, 0);
-    const lines = doc.splitTextToSize(valor, pageWidth - 2 * margin - 5);
-    doc.text(lines, margin + 5, currentY);
-    currentY += lines.length * 4 + 3;
+
+    const disponivelValor = pageWidth - valoPosx - margin;
+    const lines = doc.splitTextToSize(valor, disponivelValor);
+
+    //escreve  o valo na mesma linha do label
+    doc.text(lines, valoPosx, currentY);
+
+    currentY += (lines.length * 4) + 5;
+
   };
 
   // ========================================
@@ -219,7 +227,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
   }
 
   try {
-    imgFooter = await carregarImagem('/semec-timbrado-rodape.png');
+    imgFooter = await carregarImagem('/art_footer.png');
   } catch (e) {
     console.warn('Não foi possível carregar a imagem do footer:', e);
   }
@@ -259,13 +267,13 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
 
   // Caixa colorida para o título
   doc.setFillColor(...coresTipo.blackfull);
-  doc.roundedRect(margin - 5, currentY - 8, pageWidth - 2 * margin + 10, 18, 0.5, 0.5, 'F');
 
-  doc.setFontSize(16);
+
+  doc.setFontSize(19);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
+  doc.setTextColor(0, 0, 0);
   doc.text('REQUERIMENTO DE IMUNIDADE TRIBUTÁRIA', pageWidth / 2, currentY, { align: 'center', baseline: 'middle' });
-  currentY += 15;
+  currentY += 6;
 
   // ========================================
   // TIPO DE IMUNIDADE (com fundamento legal)
@@ -276,27 +284,43 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
   const infoTipo = tiposImunidade[dados.tipo] || tiposImunidade.reciproca;
 
   // Caixa de destaque
-  desenharCaixaSecao(currentY, 20, true);
   currentY += 2;
 
   doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...coresTipo.blackfull);
+  doc.setTextColor(0, 0, 0);
   doc.text(infoTipo.titulo, pageWidth / 2, currentY, { align: 'center', baseline: 'middle' });
-  currentY += 8;
+  currentY += 6;
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'italic');
   doc.setTextColor(...COR_CINZA);
   doc.text(infoTipo.fundamento, pageWidth / 2, currentY, { align: 'center', baseline: 'middle' });
-  currentY += 18;
+  currentY += 5;
+
+  // texto antes da linha divisóia
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...COR_CINZA);
+  doc.text('Prefeitura Municipal de Porto Velho - Secretaria de Economia', pageWidth / 2, currentY, { align: 'center', baseline: 'middle' });
+  currentY += 5;
+
+  // linha divisória
+  const margemEsquerda = 15;
+  const margemDireita = 195;
+
+  // Desenha a linha: line(x1, y1, x2, y2)
+  doc.line(margemEsquerda, currentY, margemDireita, currentY);
+  currentY += 12;
+
 
   // ========================================
   // SEÇÃO 1: IDENTIFICAÇÃO DO DECLARANTE
   // ========================================
 
   checkPageBreak(60);
-  addSectionTitle('', '1. IDENTIFICAÇÃO DO DECLARANTE');
+
+  addSectionTitle('', '1. IDENTIFICAÇÃO DO DECLARANTE', true);
   currentY += 2;
 
   addField('Nome/Razão Social', dados.razaoSocial);
@@ -305,7 +329,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
   addField('Telefone', dados.telefone);
   addField('E-mail', dados.email);
 
-  currentY += 5;
+  currentY += 3;
 
   // ========================================
   // SEÇÃO 2: REPRESENTANTE LEGAL (se houver)
@@ -313,7 +337,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
 
   if (dados.nomeRepresentante) {
     checkPageBreak(40);
-    addSectionTitle('', '2. REPRESENTANTE LEGAL');
+    addSectionTitle('', '2. REPRESENTANTE LEGAL', true);
     currentY += 2;
 
     addField('Nome', dados.nomeRepresentante);
@@ -326,7 +350,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
       addField('Cargo/Função', dados.cargoRepresentante);
     }
 
-    currentY += 5;
+    currentY += 3;
   }
 
   // ========================================
@@ -335,7 +359,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
 
   checkPageBreak(30);
   const numeroSecaoDados = dados.nomeRepresentante ? '3' : '2';
-  addSectionTitle('', `${numeroSecaoDados}. DADOS ESPECÍFICOS DO PEDIDO`);
+  addSectionTitle('', `${numeroSecaoDados}. DADOS ESPECÍFICOS DO PEDIDO`, true);
   currentY += 2;
 
   // Adicionar campos específicos conforme o tipo
@@ -411,20 +435,20 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
       break;
   }
 
-  currentY += 5;
+  currentY += 3;
 
   // ========================================
   // SEÇÃO 4: OBSERVAÇÕES (se houver)
   // ========================================
 
   if (dados.observacoes && dados.observacoes.trim()) {
-    checkPageBreak(35);
+    checkPageBreak(15);
     let numeroSecaoObs = dados.nomeRepresentante ? '4' : '3';
-    addSectionTitle('', `${numeroSecaoObs}. OBSERVAÇÕES ADICIONAIS`);
+    addSectionTitle('', `${numeroSecaoObs}. OBSERVAÇÕES ADICIONAIS`, true);
     currentY += 2;
 
     addText(dados.observacoes, 10);
-    currentY += 5;
+    currentY += 3;
   }
 
   // ========================================
@@ -566,7 +590,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
-      doc.addImage(imgFooter.base64, 'PNG', 0, pageHeight - footerHeightReal, pageWidth, footerHeightReal);
+      doc.addImage(imgFooter.base64, 'PNG', 0, pageHeight - footerHeightReal - 20, pageWidth, footerHeightReal);
     }
     // Volta para a última página antes de salvar
     doc.setPage(totalPages);
