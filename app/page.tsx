@@ -24,7 +24,7 @@ export default function HomePage() {
       descricao: 'União, Estados, Distrito Federal e Municípios',
       icon: '🏛️',
       fundamento: 'Art. 150, VI, "a", CF/88',
-      cor: 'indigo',
+      cor: 'green',
     },
     {
       tipo: 'templos',
@@ -32,7 +32,7 @@ export default function HomePage() {
       descricao: 'Patrimônio, renda ou serviços relacionados às finalidades essenciais',
       icon: '⛪',
       fundamento: 'Art. 150, VI, "b", CF/88',
-      cor: 'indigo',
+      cor: 'purple',
     },
     {
       tipo: 'partidos',
@@ -40,7 +40,7 @@ export default function HomePage() {
       descricao: 'Entidades sem fins lucrativos que atendem requisitos legais',
       icon: '🏫',
       fundamento: 'Art. 150, VI, "c", CF/88',
-      cor: 'indigo',
+      cor: 'orange',
     },
     {
       tipo: 'livros',
@@ -56,7 +56,7 @@ export default function HomePage() {
       descricao: 'Produzidos no Brasil com autores/artistas brasileiros',
       icon: '🎵',
       fundamento: 'Art. 150, VI, "e", CF/88',
-      cor: 'indigo',
+      cor: 'pink',
     },
   ];
 
