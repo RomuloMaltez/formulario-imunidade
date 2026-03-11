@@ -80,19 +80,19 @@ export default function FormularioPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Navigation & Title */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="outline" className="mb-4">
-              ← Voltar
+            <Button variant="outline" className="mb-6 hover:bg-slate-100 transition-colors">
+              ← Voltar para a página inicial
             </Button>
           </Link>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-8 border-l-4 border-[color:var(--pv-blue-900)]">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {titulos[tipo]}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 font-medium">
               Instrução Normativa SEMEC/SRM Nº 001/2025
             </p>
           </div>
