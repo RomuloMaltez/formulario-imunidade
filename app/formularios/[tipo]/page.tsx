@@ -55,20 +55,20 @@ export default function FormularioPage() {
 
   const onSubmit = async (data: any) => {
     setIsGenerating(true);
-    
+
     try {
       // Adicionar o tipo ao objeto de dados
       const dadosCompletos = {
         ...data,
         tipo: tipo,
       };
-      
+
       // Gerar o PDF
-      gerarPDFRequerimento(dadosCompletos);
-      
+      await gerarPDFRequerimento(dadosCompletos);
+
       // Feedback visual
       alert('PDF gerado com sucesso! Verifique seus downloads.');
-      
+
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       alert('Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.');
@@ -80,19 +80,19 @@ export default function FormularioPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Navigation & Title */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="outline" className="mb-4">
-              ← Voltar
+            <Button variant="outline" className="mb-6 hover:bg-slate-100 transition-colors">
+              ← Voltar para a página inicial
             </Button>
           </Link>
-          
-          <div className="bg-white rounded-lg shadow-md p-6">
+
+          <div className="bg-white rounded-lg shadow-md p-8 border-l-4 border-[color:var(--pv-blue-900)]">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {titulos[tipo]}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 font-medium">
               Instrução Normativa SEMEC/SRM Nº 001/2025
             </p>
           </div>
@@ -113,19 +113,19 @@ export default function FormularioPage() {
             {tipo === 'reciproca' && (
               <ReciprocaFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'templos' && (
               <TemplosFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'partidos' && (
               <PartidosFields register={register} errors={errors} watch={watch} />
             )}
-            
+
             {tipo === 'livros' && (
               <LivrosFields register={register} errors={errors} />
             )}
-            
+
             {tipo === 'fonogramas' && (
               <FonogramasFields register={register} errors={errors} />
             )}
@@ -141,9 +141,9 @@ export default function FormularioPage() {
                 >
                   Cancelar
                 </Button>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   variant="primary"
                   disabled={isGenerating}
                 >

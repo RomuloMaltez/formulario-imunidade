@@ -15,44 +15,25 @@ interface DadosFormulario {
   [key: string]: any;
 }
 
-// 🎨 Tipo para cores RGB (tuple de 3 números)
-type RGBColor = [number, number, number];
-
-// 🎨 PALETA DE CORES DO SISTEMA
-const CORES = {
-  // Cores principais por tipo de imunidade
-  reciproca: {
-    primaria: [34, 197, 94] as RGBColor,      // green-500
-    clara: [240, 253, 244] as RGBColor,        // green-50
-    escura: [22, 163, 74] as RGBColor,         // green-600
-  },
-  templos: {
-    primaria: [168, 85, 247] as RGBColor,      // purple-500
-    clara: [250, 245, 255] as RGBColor,        // purple-50
-    escura: [147, 51, 234] as RGBColor,        // purple-600
-  },
-  partidos: {
-    primaria: [249, 115, 22] as RGBColor,      // orange-500
-    clara: [255, 247, 237] as RGBColor,        // orange-50
-    escura: [234, 88, 12] as RGBColor,         // orange-600
-  },
-  livros: {
-    primaria: [99, 102, 241] as RGBColor,      // indigo-500
-    clara: [238, 242, 255] as RGBColor,        // indigo-50
-    escura: [79, 70, 229] as RGBColor,         // indigo-600
-  },
-  fonogramas: {
-    primaria: [236, 72, 153] as RGBColor,      // pink-500
-    clara: [253, 242, 248] as RGBColor,        // pink-50
-    escura: [219, 39, 119] as RGBColor,        // pink-600
-  },
+// 🎨 PALETA DE CORES DO SISTEMA (Baseada em pdf-styles.js)
+const CORES_REF = {
+  primaryBlue: [30, 58, 95] as RGBColor,    // #1e3a5f
+  accentGreen: [112, 182, 67] as RGBColor,   // #70b643
+  accentYellow: [242, 201, 76] as RGBColor,  // #f2c94c
+  textDark: [55, 65, 81] as RGBColor,       // #374151
+  textMedium: [107, 114, 128] as RGBColor,  // #6b7280
+  borderLight: [229, 231, 235] as RGBColor, // #e5e7eb
+  backgroundSection: [245, 245, 245] as RGBColor, // #f5f5f5
+  white: [255, 255, 255] as RGBColor,
 };
 
-// Cores institucionais
-const COR_AZUL: RGBColor = [59, 130, 246];      // blue-500
-const COR_AZUL_ESCURO: RGBColor = [30, 64, 175]; // blue-800
-const COR_CINZA: RGBColor = [107, 114, 128];     // gray-500
-const COR_CINZA_CLARO: RGBColor = [249, 250, 251]; // gray-50
+const CORES = {
+  reciproca: { primaria: CORES_REF.accentGreen, clara: [240, 253, 244] as RGBColor, escura: [22, 163, 74] as RGBColor },
+  templos: { primaria: [168, 85, 247] as RGBColor, clara: [250, 245, 255] as RGBColor, escura: [147, 51, 234] as RGBColor },
+  partidos: { primaria: [249, 115, 22] as RGBColor, clara: [255, 247, 237] as RGBColor, escura: [234, 88, 12] as RGBColor },
+  livros: { primaria: [99, 102, 241] as RGBColor, clara: [238, 242, 255] as RGBColor, escura: [79, 70, 229] as RGBColor },
+  fonogramas: { primaria: [236, 72, 153] as RGBColor, clara: [253, 242, 248] as RGBColor, escura: [219, 39, 119] as RGBColor },
+};
 
 // Informações sobre cada tipo (SEM emojis para compatibilidade com jsPDF)
 const tiposImunidade: Record<string, { titulo: string; fundamento: string }> = {
@@ -78,50 +59,47 @@ const tiposImunidade: Record<string, { titulo: string; fundamento: string }> = {
   },
 };
 
-export const gerarPDFRequerimento = (dados: DadosFormulario) => {
+// 🎨 Tipo para cores RGB (tuple de 3 números)
+type RGBColor = [number, number, number];
+
+export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
   const doc = new jsPDF('p', 'mm', 'a4');
-  
+
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 20;
   let currentY = margin;
-
-  // Obter cores do tipo específico
-  const coresTipo = CORES[dados.tipo as keyof typeof CORES] || CORES.reciproca;
+  let sectionStartY: number | null = null;
 
   // ========================================
   // FUNÇÕES AUXILIARES
   // ========================================
 
+  // Desenha o contorno da seção atual
+  const finalizeSectionBorder = () => {
+    if (sectionStartY !== null && currentY > sectionStartY) {
+      doc.setDrawColor(...CORES_REF.borderLight);
+      doc.setLineWidth(0.4); // Traço fino conforme solicitado
+      // A altura deve ser a diferença entre o ponto atual e o início da seção
+      // Subtraímos um pequeno ajuste (ex: 2mm) para a caixa não ficar muito colada no próximo título
+      const boxHeight = currentY - sectionStartY - 5;
+      doc.rect(margin, sectionStartY, pageWidth - 2 * margin, boxHeight);
+    }
+  };
+
   // Verificar quebra de página
   const checkPageBreak = (requiredSpace: number) => {
-    if (currentY + requiredSpace > pageHeight - margin - 15) {
+    const footerReserve = 30;
+    if (currentY + requiredSpace > pageHeight - footerReserve) {
+      finalizeSectionBorder(); // Fecha borda na página atual
       doc.addPage();
       currentY = margin;
-      // Re-adicionar borda lateral na nova página
-      desenharBordaLateral();
+      if (sectionStartY !== null) {
+        sectionStartY = margin; // Reinicia borda na nova página
+      }
       return true;
     }
     return false;
-  };
-
-  // Desenhar borda lateral colorida (marca visual)
-  const desenharBordaLateral = () => {
-    doc.setFillColor(...coresTipo.primaria);
-    doc.rect(0, 0, 5, pageHeight, 'F');
-  };
-
-  // Desenhar caixa colorida para seções
-  const desenharCaixaSecao = (y: number, altura: number, destaque: boolean = false) => {
-    if (destaque) {
-      doc.setFillColor(...coresTipo.clara);
-      doc.setDrawColor(...coresTipo.primaria);
-      doc.setLineWidth(0.5);
-      doc.roundedRect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 2, 2, 'FD');
-    } else {
-      doc.setFillColor(...COR_CINZA_CLARO);
-      doc.roundedRect(margin - 5, y - 5, pageWidth - 2 * margin + 10, altura, 2, 2, 'F');
-    }
   };
 
   // Adicionar texto com quebra automática
@@ -129,417 +107,293 @@ export const gerarPDFRequerimento = (dados: DadosFormulario) => {
     text: string,
     fontSize: number = 11,
     isBold: boolean = false,
-    cor: RGBColor = [0, 0, 0]
+    cor: RGBColor = CORES_REF.textDark
   ) => {
     doc.setFontSize(fontSize);
     doc.setFont('helvetica', isBold ? 'bold' : 'normal');
     doc.setTextColor(...cor);
-    const lines = doc.splitTextToSize(text, pageWidth - 2 * margin - 10);
-    const lineHeight = fontSize * 0.5;
-    
+    const lines = doc.splitTextToSize(text, pageWidth - 2 * margin - 4);
+    const lineHeight = fontSize * 0.45;
+
     checkPageBreak(lines.length * lineHeight + 5);
-    doc.text(lines, margin, currentY);
+    doc.text(lines, margin + 2, currentY);
     currentY += lines.length * lineHeight;
   };
 
-  // Adicionar título de seção
-  const addSectionTitle = (simbolo: string, titulo: string, destaque: boolean = false) => {
-    checkPageBreak(15);
-    
-    if (destaque) {
-      // Caixa de destaque para o título
-      desenharCaixaSecao(currentY, 12, true);
-    }
-    
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...coresTipo.escura);
-    // Apenas o título, sem símbolo
-    doc.text(titulo, margin, currentY + 5);
+  // Adicionar título de seção (Estilo pdf-styles.js)
+  const addSectionTitle = (titulo: string) => {
+    finalizeSectionBorder(); // Fecha a seção anterior
+
+    checkPageBreak(30);
+    sectionStartY = currentY; // Marca o início da nova seção
+
+    // Fundo da seção (primaryBlue)
+    doc.setFillColor(...CORES_REF.primaryBlue);
+    doc.rect(margin, currentY, pageWidth - 2 * margin, 8, 'F');
+
+
+    // Texto da seção (branco)
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...CORES_REF.white);
+    doc.text(titulo.toUpperCase(), margin + 3, currentY + 5);
+
     currentY += 10;
   };
 
-  // Adicionar campo com label e valor
+  // Adicionar campo com label e valor (Estilo makeFieldGrid)
   const addField = (label: string, valor: string) => {
-    checkPageBreak(10);
-    doc.setFontSize(10);
+    checkPageBreak(8);
+
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...COR_CINZA);
-    doc.text(`${label}:`, margin, currentY);
-    currentY += 5;
-    
+    doc.setTextColor(...CORES_REF.primaryBlue);
+    doc.text(`${label}:`, margin + 2, currentY);
+
+    const labelWidth = doc.getTextWidth(`${label}:`);
+    const valoPosx = margin + labelWidth + 4;
+
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(0, 0, 0);
-    const lines = doc.splitTextToSize(valor, pageWidth - 2 * margin - 5);
-    doc.text(lines, margin + 5, currentY);
-    currentY += lines.length * 4 + 3;
+    doc.setTextColor(...CORES_REF.textDark);
+
+    const disponivelValor = pageWidth - valoPosx - margin - 2;
+    const valorTexto = valor || '---';
+    const lines = doc.splitTextToSize(valorTexto, disponivelValor);
+
+    doc.text(lines, valoPosx, currentY);
+    currentY += (lines.length * 4) + 2;
   };
 
   // ========================================
-  // INÍCIO DO DOCUMENTO
+  // CABEÇALHO INSTITUCIONAL (Estilo _makeHeaderInstitucional)
   // ========================================
 
-  // Desenhar borda lateral colorida
-  desenharBordaLateral();
+  // Quadro de fundo
+  doc.setFillColor(...CORES_REF.backgroundSection);
+  doc.rect(margin, margin, pageWidth - 2 * margin, 20, 'F');
 
-  // ========================================
-  // CABEÇALHO COM "GRADIENTE" (simulado)
-  // ========================================
-  
-  // Retângulo de fundo azul degradê (simulado com retângulos)
-  doc.setFillColor(219, 234, 254); // blue-100
-  doc.rect(0, 0, pageWidth, 50, 'F');
-  
-  doc.setFillColor(191, 219, 254); // blue-200
-  doc.rect(0, 0, pageWidth, 35, 'F');
-  
-  doc.setFillColor(147, 197, 253); // blue-300
-  doc.rect(0, 0, pageWidth, 20, 'F');
+  // Linha inferior decorativa
+  doc.setDrawColor(...CORES_REF.accentGreen);
+  doc.setLineWidth(0.8);
+  doc.line(margin, margin + 20, pageWidth - margin, margin + 20);
 
   // Texto do cabeçalho
-  currentY = 12;
-  doc.setFontSize(18);
+  doc.setFontSize(15);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...COR_AZUL_ESCURO);
-  doc.text('PREFEITURA MUNICIPAL DE PORTO VELHO', pageWidth / 2, currentY, { align: 'center' });
-  
-  currentY += 7;
-  doc.setFontSize(12);
-  doc.text('Secretaria Municipal de Economia (SEMEC)', pageWidth / 2, currentY, { align: 'center' });
-  
-  currentY += 6;
-  doc.setFontSize(11);
-  doc.text('Secretaria Executiva da Receita Municipal (SRM)', pageWidth / 2, currentY, { align: 'center' });
+  doc.setTextColor(...CORES_REF.primaryBlue);
+  doc.text('PREFEITURA MUNICIPAL DE PORTO VELHO', pageWidth / 2, margin + 9, { align: 'center' });
 
-  currentY = 55; // Pular o cabeçalho
-
-  // ========================================
-  // TÍTULO PRINCIPAL COM COR DO TIPO
-  // ========================================
-  
-  checkPageBreak(20);
-  
-  // Caixa colorida para o título
-  doc.setFillColor(...coresTipo.primaria);
-  doc.roundedRect(margin - 5, currentY - 8, pageWidth - 2 * margin + 10, 18, 3, 3, 'F');
-  
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('REQUERIMENTO DE IMUNIDADE TRIBUTÁRIA', pageWidth / 2, currentY, { align: 'center' });
-  currentY += 15;
-
-  // ========================================
-  // TIPO DE IMUNIDADE (com fundamento legal)
-  // ========================================
-  
-  checkPageBreak(25);
-  
-  const infoTipo = tiposImunidade[dados.tipo] || tiposImunidade.reciproca;
-  
-  // Caixa de destaque
-  desenharCaixaSecao(currentY, 20, true);
-  currentY += 2;
-  
-  doc.setFontSize(13);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...coresTipo.escura);
-  doc.text(infoTipo.titulo, pageWidth / 2, currentY + 5, { align: 'center' });
-  currentY += 8;
-  
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('SECRETARIA MUNICIPAL DE ECONOMIA', pageWidth / 2, margin + 14, { align: 'center' });
+
+  currentY = margin + 30;
+
+
+  // ========================================
+  // TÍTULO DO DOCUMENTO
+  // ========================================
+
+  checkPageBreak(20);
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...CORES_REF.accentGreen);
+  doc.text('REQUERIMENTO – IMUNIDADE TRIBUTÁRIA', pageWidth / 2, currentY, { align: 'center' });
+  currentY += 5;
+
+  const infoTipo = tiposImunidade[dados.tipo] || tiposImunidade.reciproca;
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...CORES_REF.textDark);
+  doc.text(infoTipo.titulo.toUpperCase(), pageWidth / 2, currentY, { align: 'center' });
+  currentY += 5;
+
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'italic');
-  doc.setTextColor(...COR_CINZA);
-  doc.text(infoTipo.fundamento, pageWidth / 2, currentY + 3, { align: 'center' });
-  currentY += 12;
+  doc.setTextColor(...CORES_REF.textMedium);
+  doc.text(infoTipo.fundamento, pageWidth / 2, currentY, { align: 'center' });
+  currentY += 10;
 
   // ========================================
   // SEÇÃO 1: IDENTIFICAÇÃO DO DECLARANTE
   // ========================================
-  
-  checkPageBreak(60);
-  addSectionTitle('', '1. IDENTIFICAÇÃO DO DECLARANTE');
-  currentY += 2;
-  
-  addField('Nome/Razão Social', dados.razaoSocial);
+
+  addSectionTitle('1. IDENTIFICAÇÃO DO DECLARANTE');
+
+  currentY += 3;
+  addField('Razão Social', dados.razaoSocial);
   addField('CNPJ', dados.cnpj);
   addField('Endereço', dados.endereco);
   addField('Telefone', dados.telefone);
   addField('E-mail', dados.email);
-  
-  currentY += 5;
+
+  currentY += 3;
 
   // ========================================
-  // SEÇÃO 2: REPRESENTANTE LEGAL (se houver)
+  // SEÇÃO 2: REPRESENTANTE LEGAL
   // ========================================
-  
+
   if (dados.nomeRepresentante) {
-    checkPageBreak(40);
-    addSectionTitle('', '2. REPRESENTANTE LEGAL');
-    currentY += 2;
-    
+    addSectionTitle('2. REPRESENTANTE LEGAL');
+    currentY += 3;
     addField('Nome', dados.nomeRepresentante);
-    
-    if (dados.cpfRepresentante) {
-      addField('CPF', dados.cpfRepresentante);
-    }
-    
-    if (dados.cargoRepresentante) {
-      addField('Cargo/Função', dados.cargoRepresentante);
-    }
-    
+    if (dados.cpfRepresentante) addField('CPF', dados.cpfRepresentante);
+    if (dados.cargoRepresentante) addField('Cargo/Função', dados.cargoRepresentante);
     currentY += 5;
   }
 
   // ========================================
   // SEÇÃO 3: DADOS ESPECÍFICOS
   // ========================================
-  
-  checkPageBreak(50);
-  const numeroSecaoDados = dados.nomeRepresentante ? '3' : '2';
-  addSectionTitle('', `${numeroSecaoDados}. DADOS ESPECÍFICOS DO PEDIDO`);
-  currentY += 2;
 
-  // Adicionar campos específicos conforme o tipo
+  const numeroSecaoDados = dados.nomeRepresentante ? '3' : '2';
+  addSectionTitle(`${numeroSecaoDados}. DADOS ESPECÍFICOS DO PEDIDO`);
+
+  currentY += 3;
+
   switch (dados.tipo) {
     case 'reciproca':
-      if (dados.naturezaJuridica) {
-        const naturezaMap: Record<string, string> = {
-          'Uniao': 'União',
-          'Estado': 'Estado',
-          'Municipio': 'Município',
-          'DistritoFederal': 'Distrito Federal'
-        };
-        addField('Natureza Jurídica', naturezaMap[dados.naturezaJuridica] || dados.naturezaJuridica);
-      }
-      if (dados.descricaoBem) {
-        addField('Descrição do Bem/Serviço', dados.descricaoBem);
-      }
-      if (dados.enderecoImovel) {
-        addField('Endereço do Imóvel', dados.enderecoImovel);
-      }
-      if (dados.matriculaImovel) {
-        addField('Matrícula(s) do Imóvel', dados.matriculaImovel);
-      }
+      if (dados.naturezaJuridica) addField('Natureza Jurídica', dados.naturezaJuridica);
+      if (dados.descricaoBem) addField('Descrição', dados.descricaoBem);
+      if (dados.enderecoImovel) addField('Endereço do Imóvel', dados.enderecoImovel);
+      if (dados.matriculaImovel) addField('Matrícula(s)', dados.matriculaImovel);
       break;
-      
     case 'templos':
-      if (dados.nomeTemplo) {
-        addField('Nome do Templo', dados.nomeTemplo);
-      }
-      if (dados.enderecoImovel) {
-        addField('Endereço do Imóvel', dados.enderecoImovel);
-      }
-      if (dados.matriculaImovel) {
-        addField('Matrícula(s) do Imóvel', dados.matriculaImovel);
-      }
+      if (dados.nomeTemplo) addField('Nome do Templo', dados.nomeTemplo);
+      if (dados.enderecoImovel) addField('Endereço do Imóvel', dados.enderecoImovel);
+      if (dados.matriculaImovel) addField('Matrícula(s)', dados.matriculaImovel);
       break;
-      
     case 'partidos':
-      if (dados.nomeEntidade) {
-        addField('Nome da Entidade', dados.nomeEntidade);
-      }
-      if (dados.tipoEntidade) {
-        const tipoMap: Record<string, string> = {
-          'PartidoPolitico': 'Partido Político',
-          'EntidadeSindical': 'Entidade Sindical',
-          'InstituicaoEducacao': 'Instituição de Educação',
-          'InstituicaoAssistencia': 'Instituição de Assistência Social'
-        };
-        addField('Tipo de Entidade', tipoMap[dados.tipoEntidade] || dados.tipoEntidade);
-      }
-      if (dados.descricaoBem) {
-        addField('Descrição do Bem/Serviço', dados.descricaoBem);
-      }
-      if (dados.enderecoImovel) {
-        addField('Endereço do Imóvel', dados.enderecoImovel);
-      }
-      if (dados.matriculaImovel) {
-        addField('Matrícula(s) do Imóvel', dados.matriculaImovel);
-      }
-      if (dados.possuiCEBAS) {
-        addField('Possui CEBAS', 'Sim');
-      }
+      if (dados.nomeEntidade) addField('Nome da Entidade', dados.nomeEntidade);
+      if (dados.tipoEntidade) addField('Tipo', dados.tipoEntidade);
+      if (dados.descricaoBem) addField('Descrição', dados.descricaoBem);
+      if (dados.enderecoImovel) addField('Endereço do Imóvel', dados.enderecoImovel);
+      if (dados.matriculaImovel) addField('Matrícula(s)', dados.matriculaImovel);
+      if (dados.possuiCEBAS) addField('Possui CEBAS', 'Sim');
       break;
-      
-    case 'livros':
-    case 'fonogramas':
-      if (dados.nomeEntidade) {
-        addField('Nome da Entidade', dados.nomeEntidade);
-      }
-      if (dados.descricaoAtividade) {
-        addField('Descrição da Atividade', dados.descricaoAtividade);
-      }
-      break;
+    default:
+      if (dados.nomeEntidade) addField('Nome da Entidade', dados.nomeEntidade);
+      if (dados.descricaoAtividade) addField('Atividade', dados.descricaoAtividade);
   }
 
   currentY += 5;
 
   // ========================================
-  // SEÇÃO 4: OBSERVAÇÕES (se houver)
+  // SEÇÃO 4: OBSERVAÇÕES
   // ========================================
-  
+
   if (dados.observacoes && dados.observacoes.trim()) {
-    checkPageBreak(35);
     let numeroSecaoObs = dados.nomeRepresentante ? '4' : '3';
-    addSectionTitle('', `${numeroSecaoObs}. OBSERVAÇÕES ADICIONAIS`);
-    currentY += 2;
-    
-    addText(dados.observacoes, 10);
+    addSectionTitle(`${numeroSecaoObs}. OBSERVAÇÕES ADICIONAIS`);
+    currentY += 3;
+    addText(dados.observacoes, 9);
     currentY += 5;
   }
 
   // ========================================
-  // SEÇÃO: DECLARAÇÕES ESPECÍFICAS
+  // SEÇÃO: DECLARAÇÕES
   // ========================================
-  
-  checkPageBreak(70);
-  let numeroSecaoDecl = dados.nomeRepresentante ? '4' : '3';
-  if (dados.observacoes && dados.observacoes.trim()) {
-    numeroSecaoDecl = dados.nomeRepresentante ? '5' : '4';
-  }
-  
-  addSectionTitle('', `${numeroSecaoDecl}. DECLARAÇÕES ESPECÍFICAS`, true);
-  currentY += 5;
 
-  // Adicionar declarações específicas por tipo
-  doc.setFontSize(10);
-  doc.setTextColor(0, 0, 0);
-  
+  let numeroSecaoDecl = dados.nomeRepresentante ? '5' : '4';
+  if (dados.observacoes && dados.observacoes.trim()) {
+    numeroSecaoDecl = (parseInt(numeroSecaoDecl) + 1).toString();
+  }
+
+  addSectionTitle(`${numeroSecaoDecl}. DECLARAÇÕES ESPECÍFICAS`);
+
+  currentY += 3;
+
+  const textOptions = { fontSize: 8.5, color: CORES_REF.textDark };
+
   switch (dados.tipo) {
     case 'reciproca':
-      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados às finalidades essenciais do ente federativo ou às delas decorrentes.', 10);
-      currentY += 5;
+      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados às finalidades essenciais do ente federativo.', 8.5);
       break;
-      
     case 'templos':
-      addText('• Declaro que o patrimônio, renda ou serviços estão relacionados às finalidades essenciais do templo, conforme o art. 150, § 4º, da Constituição Federal de 1988.', 10);
-      currentY += 5;
+      addText('• Declaro que o patrimônio, renda ou serviços estão relacionados às finalidades essenciais do templo.', 8.5);
       break;
-      
     case 'partidos':
-      addText('• Declaro que a entidade NÃO distribui qualquer parcela de seu patrimônio ou de suas rendas, a qualquer título.', 10);
-      currentY += 3;
-      addText('• Declaro que a entidade aplica integralmente, no País, os seus recursos na manutenção dos seus objetivos institucionais.', 10);
-      currentY += 3;
-      addText('• Declaro que a entidade mantém escrituração de suas receitas e despesas em livros revestidos de formalidades capazes de assegurar sua exatidão.', 10);
-      currentY += 3;
-      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados às suas finalidades essenciais ou às delas decorrentes.', 10);
-      currentY += 5;
+      addText('• Declaro que a entidade NÃO distribui qualquer parcela de seu patrimônio ou de suas rendas.', 8.5);
+      addText('• Declaro que aplica integralmente seus recursos na manutenção dos objetivos institucionais no País.', 8.5);
+      addText('• Declaro que mantém escrituração de suas receitas e despesas.', 8.5);
       break;
-      
-    case 'livros':
-      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados à produção ou circulação de livros, jornais ou periódicos, ou ao papel destinado à sua impressão.', 10);
-      currentY += 5;
-      break;
-      
-    case 'fonogramas':
-      addText('• Declaro que os fonogramas/videofonogramas são produzidos no Brasil, contendo obras musicais ou literomusicais de autores brasileiros e/ou interpretadas por artistas brasileiros.', 10);
-      currentY += 3;
-      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados à produção ou circulação dos fonogramas e videofonogramas musicais, e que não se refere à etapa de replicação industrial de mídias ópticas de leitura a laser.', 10);
-      currentY += 5;
-      break;
+    default:
+      addText('• Declaro que o patrimônio, renda ou serviços estão vinculados às finalidades essenciais da entidade.', 8.5);
   }
 
-  // ========================================
-  // DECLARAÇÃO DE RESPONSABILIDADE GERAL
-  // ========================================
-  
-  checkPageBreak(70);
-  
-  // Caixa de destaque vermelha para a declaração importante
-  doc.setFillColor(254, 242, 242); // red-50
-  doc.setDrawColor(239, 68, 68); // red-500
-  doc.setLineWidth(1);
-  doc.roundedRect(margin - 5, currentY - 5, pageWidth - 2 * margin + 10, 40, 2, 2, 'FD');
-  
-  currentY += 2;
-  
-  // Título com fonte menor e margens maiores
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(185, 28, 28); // red-700
-  const tituloDeclaracao = 'DECLARAÇÃO DE RESPONSABILIDADE GERAL';
-  const linhasTitulo = doc.splitTextToSize(tituloDeclaracao, pageWidth - 2 * margin - 30);
-  doc.text(linhasTitulo, pageWidth / 2, currentY, { align: 'center' });
-  currentY += 8;
-  
-  // Texto da declaração com margem ainda maior
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(0, 0, 0);
-  const declaracao = 'Declaro, sob as penas da lei, que as informações prestadas nesta autodeclaração são verdadeiras e que a entidade preenche todos os requisitos legais e constitucionais para o gozo da imunidade tributária pleiteada, estando ciente de que a falsidade das informações implicará na suspensão ou cancelamento da imunidade e na cobrança dos impostos devidos, com os acréscimos legais.';
-  const linhasDeclaracao = doc.splitTextToSize(declaracao, pageWidth - 2 * margin - 30);
-  doc.text(linhasDeclaracao, margin + 10, currentY);
-  currentY += 35;
+  currentY += 10;
 
   // ========================================
-  // DATA E LOCAL
+  // TERMO DE RESPONSABILIDADE (Estilo _makeTermo)
   // ========================================
-  
-  checkPageBreak(40);
-  const dataFormatada = new Date(dados.dataDeclaracao).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
+
+  addSectionTitle('TERMO DE RESPONSABILIDADE');
+
+  currentY += 3;
+
+  const clausulas = [
+    'As informações prestadas são verdadeiras e a entidade preenche os requisitos legais para imunidade.',
+    'A falsidade das informações implicará na suspensão ou cancelamento da imunidade e cobrança de impostos.',
+    'Estou ciente de que devo manter a documentação comprobatória à disposição do fisco municipal.',
+  ];
+
+  clausulas.forEach((c, i) => {
+    addText(`${i + 1}. ${c}`, 8);
   });
-  
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'italic');
-  doc.setTextColor(...COR_CINZA);
-  doc.text(`Porto Velho/RO, ${dataFormatada}`, pageWidth / 2, currentY, { align: 'center' });
-  currentY += 20;
+
+  currentY += 4;
+
+  finalizeSectionBorder();
+  currentY += 10;
 
   // ========================================
-  // ASSINATURA
+  // ASSINATURAS
   // ========================================
-  
-  checkPageBreak(35);
-  
-  // Linha da assinatura
-  doc.setDrawColor(...COR_CINZA);
+
+  const yFixoAssinatura = pageHeight - 40;
+  if (currentY > yFixoAssinatura - 15) {
+    doc.addPage();
+  }
+
+  const boxHeight = 50;
+  doc.rect(margin, yFixoAssinatura - 28, pageWidth - 2 * margin, boxHeight);
+
+  doc.setDrawColor(...CORES_REF.borderLight);
   doc.setLineWidth(0.5);
-  doc.line(margin + 35, currentY, pageWidth - margin - 35, currentY);
-  currentY += 5;
-  
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...COR_CINZA);
-  doc.text('Assinatura do Declarante ou Representante Legal', pageWidth / 2, currentY, { align: 'center' });
-  currentY += 15;
+  doc.line(margin + 20, yFixoAssinatura, pageWidth - margin - 20, yFixoAssinatura);
 
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...CORES_REF.textMedium);
+  doc.text('Assinatura do Declarante ou Representante Legal', pageWidth / 2, yFixoAssinatura + 5, { align: 'center' });
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'italic');
+  doc.text('Este documento pode ser assinado digitalmente pelo GOV.BR, SEI ou outro meio legal.', pageWidth / 2, yFixoAssinatura + 10, { align: 'center' });
+  currentY += 7;
   // ========================================
-  // RODAPÉ VISUAL
+  // RODAPÉ (Estilo makeDocFooter)
   // ========================================
-  
-  // Desenhar rodapé em todas as páginas
+
+  // Finaliza a borda da última seção antes de salvar
+
+
   const totalPages = doc.getNumberOfPages();
-  
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    
-    // Retângulo de fundo do rodapé
-    doc.setFillColor(...COR_AZUL_ESCURO);
-    doc.rect(0, pageHeight - 20, pageWidth, 20, 'F');
-    
-    // Texto do rodapé
     doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(255, 255, 255);
-    doc.text('Instrução Normativa SEMEC/SRM Nº 001/2025', pageWidth / 2, pageHeight - 13, { align: 'center' });
-    
-    doc.setFontSize(7);
-    doc.text('Secretaria Municipal de Economia - Secretaria Executiva da Receita Municipal', pageWidth / 2, pageHeight - 8, { align: 'center' });
-    
-    // Número da página
-    doc.setFontSize(8);
-    doc.text(`Página ${i} de ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+    doc.setTextColor(...CORES_REF.textMedium);
+    doc.text(`Página ${i} de ${totalPages} | Gerado em ${new Date().toLocaleDateString('pt-BR')} | Porto Velho - RO`, pageWidth / 2, pageHeight - 5, { align: 'center' });
   }
+
+
 
   // ========================================
   // SALVAR PDF
   // ========================================
-  
+
   const tipoFormatado = dados.tipo.charAt(0).toUpperCase() + dados.tipo.slice(1);
   const nomeArquivo = `Requerimento_Imunidade_${tipoFormatado}_${dados.razaoSocial.substring(0, 20).replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.pdf`;
   doc.save(nomeArquivo);

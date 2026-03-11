@@ -7,7 +7,14 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Sistema de Imunidade Tributária - Porto Velho',
   description: 'Sistema de Solicitação de imunidade tributária do Município de Porto Velho - IN 001/2025',
+  icons: {
+    icon: '/imagem_icon-removebg-preview.png',
+  },
 };
+
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { Suspense } from 'react';
 
 export default function RootLayout({
   children,
@@ -17,7 +24,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
-        {children}
+        <Suspense fallback={<div className="h-20 bg-white" />}>
+          <Header />
+        </Suspense>
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
