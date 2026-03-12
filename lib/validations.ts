@@ -8,7 +8,7 @@ const dadosComuns = z.object({
   razaoSocial: z.string().min(3, 'Razão social deve ter no mínimo 3 caracteres'),
   cnpj: z.string().regex(cnpjRegex, 'CNPJ inválido. Formato: 00.000.000/0000-00'),
   endereco: z.string().min(10, 'Endereço completo é obrigatório'),
-  telefone: z.string().min(10, 'Telefone é obrigatório'),
+  telefone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Telefone deve ser completamente preenchido. Formato: (00) 00000-0000'),
   email: z.string().email('Email inválido'),
   nomeRepresentante: z.string().optional(),
   cpfRepresentante: z.string().optional(),

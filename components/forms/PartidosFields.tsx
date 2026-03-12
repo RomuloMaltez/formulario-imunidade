@@ -23,10 +23,10 @@ export const PartidosFields: React.FC<PartidosFieldsProps> = ({ register, errors
   const mostrarCEBAS = tipoEntidade === 'InstituicaoEducacao' || tipoEntidade === 'InstituicaoAssistencia';
 
   return (
-    <div className="space-y-6">
-      <div className="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
-        <h2 className="text-xl font-bold text-orange-900 mb-4">
-          🏛️ Dados da Entidade
+    <>
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Dados da Entidade
         </h2>
         
         <Input
@@ -68,7 +68,7 @@ export const PartidosFields: React.FC<PartidosFieldsProps> = ({ register, errors
         />
 
         {mostrarCEBAS && (
-          <div className="mt-4 p-4 bg-blue-50 rounded border border-blue-200">
+          <div className="mt-4 p-4 bg-gray-50 rounded border border-gray-200">
             <Checkbox
               label="Possuo Certificado de Entidade Beneficente de Assistência Social (CEBAS)"
               {...register('possuiCEBAS')}
@@ -79,7 +79,7 @@ export const PartidosFields: React.FC<PartidosFieldsProps> = ({ register, errors
           </div>
         )}
 
-        <div className="mt-6 p-4 bg-white rounded border border-orange-200">
+        <div className="mt-6 p-4 bg-gray-50 rounded border border-gray-200">
           <h3 className="font-semibold text-gray-900 mb-3">
             ✓ Declarações Obrigatórias (Art. 14 do CTN):
           </h3>
@@ -109,6 +109,6 @@ export const PartidosFields: React.FC<PartidosFieldsProps> = ({ register, errors
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };

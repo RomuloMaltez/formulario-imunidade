@@ -13,10 +13,10 @@ export const DadosComuns: React.FC<DadosComunsProps> = ({ register, errors }) =>
   const dataAtual = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="space-y-6">
-      <div className="bg-blue-50 p-6 rounded-lg">
-        <h2 className="text-xl font-bold text-blue-900 mb-4">
-          📋 Dados do Declarante
+    <>
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Dados do Declarante
         </h2>
         
         <Input
@@ -61,9 +61,9 @@ export const DadosComuns: React.FC<DadosComunsProps> = ({ register, errors }) =>
         </div>
       </div>
 
-      <div className="bg-gray-50 p-6 rounded-lg">
+      <div className="p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">
-          👤 Dados do Representante Legal (se aplicável)
+          Dados do Representante Legal (se aplicável)
         </h2>
         
         <Input
@@ -91,9 +91,9 @@ export const DadosComuns: React.FC<DadosComunsProps> = ({ register, errors }) =>
         </div>
       </div>
 
-      <div className="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
-        <h2 className="text-xl font-bold text-purple-900 mb-4">
-          📝 Observações Adicionais
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Observações Adicionais
         </h2>
         
         <Textarea
@@ -105,9 +105,9 @@ export const DadosComuns: React.FC<DadosComunsProps> = ({ register, errors }) =>
         />
       </div>
 
-      <div className="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500">
-        <h2 className="text-xl font-bold text-yellow-900 mb-4">
-          ⚠️ Declaração de Responsabilidade
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Declaração de Responsabilidade
         </h2>
         
         <Checkbox
@@ -122,6 +122,6 @@ export const DadosComuns: React.FC<DadosComunsProps> = ({ register, errors }) =>
           value={dataAtual}
         />
       </div>
-    </div>
+    </>
   );
 };
