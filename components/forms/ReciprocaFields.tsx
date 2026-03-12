@@ -18,10 +18,10 @@ export const ReciprocaFields: React.FC<ReciprocaFieldsProps> = ({ register, erro
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
-        <h2 className="text-xl font-bold text-green-900 mb-4">
-          🏛️ Imunidade Recíproca - Ente Federativo
+    <>
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Imunidade Recíproca - Ente Federativo
         </h2>
         
         <Select
@@ -55,7 +55,7 @@ export const ReciprocaFields: React.FC<ReciprocaFieldsProps> = ({ register, erro
           rows={3}
         />
 
-        <div className="mt-6 p-4 bg-white rounded border border-green-200">
+        <div className="mt-6 p-4 bg-gray-50 rounded border border-gray-200">
           <Checkbox
             label="Declaro que o patrimônio, renda ou serviços estão vinculados às finalidades essenciais do ente federativo ou às delas decorrentes."
             {...register('declaracaoVinculo')}
@@ -63,6 +63,6 @@ export const ReciprocaFields: React.FC<ReciprocaFieldsProps> = ({ register, erro
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };

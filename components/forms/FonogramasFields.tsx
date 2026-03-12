@@ -11,10 +11,10 @@ interface FonogramasFieldsProps {
 
 export const FonogramasFields: React.FC<FonogramasFieldsProps> = ({ register, errors }) => {
   return (
-    <div className="space-y-6">
-      <div className="bg-pink-50 p-6 rounded-lg border-l-4 border-pink-500">
-        <h2 className="text-xl font-bold text-pink-900 mb-4">
-          🎵 Fonogramas e Videofonogramas Musicais
+    <>
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          Fonogramas e Videofonogramas Musicais
         </h2>
         
         <Input
@@ -32,7 +32,7 @@ export const FonogramasFields: React.FC<FonogramasFieldsProps> = ({ register, er
           rows={5}
         />
 
-        <div className="mt-6 p-4 bg-white rounded border border-pink-200">
+        <div className="mt-6 p-4 bg-gray-50 rounded border border-gray-200">
           <Checkbox
             label="Declaro que os fonogramas/videofonogramas são produzidos no Brasil, contendo obras musicais ou literomusicais de autores brasileiros e/ou interpretadas por artistas brasileiros."
             {...register('declaracaoNacionalidade')}
@@ -52,6 +52,6 @@ export const FonogramasFields: React.FC<FonogramasFieldsProps> = ({ register, er
           </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };

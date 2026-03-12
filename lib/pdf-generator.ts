@@ -366,7 +366,7 @@ export const gerarPDFRequerimento = async (dados: DadosFormulario) => {
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...CORES_REF.textMedium);
+  doc.setTextColor('black');
   doc.text('Assinatura do Declarante ou Representante Legal', pageWidth / 2, yFixoAssinatura + 5, { align: 'center' });
 
   doc.setFontSize(8);

@@ -105,7 +105,7 @@ export default function FormularioPage() {
 
         {/* Formulário */}
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
-          <div className="space-y-6">
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 overflow-hidden">
             {/* Campos Comuns - Sempre aparecem */}
             <DadosComuns register={register} errors={errors} />
 
@@ -130,8 +130,35 @@ export default function FormularioPage() {
               <FonogramasFields register={register} errors={errors} />
             )}
 
+            {/* Próximos Passos */}
+            <div className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Próximos Passos:
+              </h3>
+              <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
+                <li>Gere o requerimento em PDF clicando no botão abaixo</li>
+                <li>Reúna todos os documentos necessários listados</li>
+                <li>Protocolize o requerimento e os documentos na Secretaria Executiva da Receita Municipal (SRM)</li>
+                <li>Acompanhe a análise do processo</li>
+              </ol>
+            </div>
+
+            {/* Informações Importantes */}
+            <div className="p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Informações Importantes:
+              </h3>
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li>• O reconhecimento da imunidade não gera direito adquirido</li>
+                <li>• A imunidade pode ser suspensa ou cancelada a qualquer tempo</li>
+                <li>• O Certificado de Imunidade tem validade de 5 anos</li>
+                <li>• Todos os documentos devem estar legíveis e atualizados</li>
+                <li>• A falsidade de informações implica em sanções legais</li>
+              </ul>
+            </div>
+
             {/* Botões de Ação */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-gray-50 p-6">
               <div className="flex flex-col sm:flex-row gap-4 justify-end">
                 <Button
                   type="button"
@@ -147,39 +174,12 @@ export default function FormularioPage() {
                   variant="primary"
                   disabled={isGenerating}
                 >
-                  {isGenerating ? '⏳ Gerando PDF...' : '📄 Gerar Requerimento em PDF'}
+                  {isGenerating ? 'Gerando PDF...' : 'Gerar Requerimento em PDF'}
                 </Button>
               </div>
             </div>
           </div>
         </form>
-
-        {/* Informações Adicionais */}
-        <div className="max-w-4xl mx-auto mt-8 bg-orange-50 border-l-4 border-orange-500 p-6 rounded-lg">
-          <h3 className="font-semibold text-orange-900 mb-2">
-            📋 Próximos Passos:
-          </h3>
-          <ol className="text-sm text-orange-800 space-y-2 list-decimal list-inside">
-            <li>Gere o requerimento em PDF clicando no botão acima</li>
-            <li>Reúna todos os documentos necessários listados</li>
-            <li>Protocolize o requerimento e os documentos na Secretaria Executiva da Receita Municipal (SRM)</li>
-            <li>Acompanhe a análise do processo</li>
-          </ol>
-        </div>
-
-        {/* Avisos Importantes */}
-        <div className="max-w-4xl mx-auto mt-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
-          <h3 className="font-semibold text-yellow-900 mb-2">
-            ℹ️ Informações Importantes:
-          </h3>
-          <ul className="text-sm text-yellow-800 space-y-1">
-            <li>• O reconhecimento da imunidade não gera direito adquirido</li>
-            <li>• A imunidade pode ser suspensa ou cancelada a qualquer tempo</li>
-            <li>• O Certificado de Imunidade tem validade de 5 anos</li>
-            <li>• Todos os documentos devem estar legíveis e atualizados</li>
-            <li>• A falsidade de informações implica em sanções legais</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
