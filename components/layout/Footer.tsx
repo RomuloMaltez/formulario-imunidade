@@ -11,7 +11,7 @@ export function Footer() {
           {/* Logo */}
           <div className="flex items-center gap-3 sm:gap-4">
             <Image
-              src="/logo_semec_borda_branca.png"
+              src="/semec/formulario-imunidade/logo_semec_borda_branca.png"
               alt="Logo oficial da SEMEC Porto Velho"
               width={100}
               height={100}

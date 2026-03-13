@@ -47,7 +47,7 @@ export function Header() {
           <div className="order-3 flex w-full items-center lg:order-2">
             <div className="flex h-full w-full items-center justify-center overflow-visible">
               <div className="relative w-full max-w-[1280px]">
-                <Image src="/PortoVelhoPintura.svg" alt="Ilustração linear destacando pontos turísticos de Porto Velho" width={1280} height={190} className="h-[190px] w-full object-cover" />
+                <Image src="/semec/formulario-imunidade/PortoVelhoPintura.svg" alt="Ilustração linear destacando pontos turísticos de Porto Velho" width={1280} height={190} className="h-[190px] w-full object-cover" />
               </div>
             </div>
           </div>
