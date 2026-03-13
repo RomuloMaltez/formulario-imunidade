@@ -110,7 +110,7 @@ function HomeContent() {
             {filteredTiposImunidade.map((item) => (
               <Link
                 key={item.tipo}
-                href={`/formularios/${item.tipo}`}
+                href={`/semec/formulario-imunidade/formularios/${item.tipo}`}
                 className="block group"
               >
                 <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 p-6 h-full flex flex-col">
