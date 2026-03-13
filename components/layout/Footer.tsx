@@ -126,7 +126,7 @@ export function Footer() {
               </div>
               <a href="https://api.whatsapp.com/send?phone=556999425251" target="_blank" rel="noopener noreferrer" className="group !mt-3 flex items-center gap-2.5 rounded-lg border border-[#70B643] bg-white p-2.5 transition hover:bg-[#70B643]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#70B643] sm:!mt-4 sm:gap-3 sm:p-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-[#70B643] bg-white text-[#70B643] shadow-sm transition group-hover:scale-105 sm:h-10 sm:w-10">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></svg>
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[0.55rem] font-semibold uppercase tracking-wider text-pv-blue-700 sm:text-[0.6rem]">
@@ -169,7 +169,7 @@ export function Footer() {
                 <a href="https://www.instagram.com/semec.pvh/" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-2 rounded-lg border border-[#F7A1C4] bg-[#FDE9F1] hover:bg-[#F9C5DA] px-3 py-2 shadow-sm transition hover:shadow-md sm:px-4 sm:py-2.5">
                   <span className="flex h-7 w-7 items-center justify-center rounded bg-gradient-to-br from-[#f58529] via-[#dd2a7b] to-[#8134af] p-[1px] transition group-hover:scale-110 sm:h-8 sm:w-8 sm:rounded-md">
                     <span className="flex h-full w-full items-center justify-center rounded bg-white text-[#C13584] sm:rounded-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
                     </span>
                   </span>
                   <span className="text-[0.8rem] font-semibold text-pv-blue-900 sm:text-sm">
@@ -192,7 +192,7 @@ export function Footer() {
         aria-hidden="true"
         className="h-7 w-full bg-repeat-x sm:h-9"
         style={{
-          backgroundImage: "url('/footer-banner.png')",
+          backgroundImage: "url('/semec/formulario-imunidade/footer-banner.png')",
           backgroundSize: "328px 48px",
           backgroundPosition: "left center"
         }}
