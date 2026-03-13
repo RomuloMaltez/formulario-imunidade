@@ -39,7 +39,7 @@ export function Header() {
           {/* Logo */}
           <div className="order-1 flex w-full items-center justify-center self-center lg:order-1 lg:w-auto lg:justify-start lg:self-start lg:pr-4">
             <Link href="/" aria-label="Ir para a página inicial da SEMEC Porto Velho" className="shrink-0">
-              <Image src="/logo-semec.svg" alt="Logotipo da Prefeitura de Porto Velho - SEMEC" width={200} height={200} className="object-contain" style={{ width: '200px', height: '200px' }} />
+              <Image src="/semec/formulario-imunidade/logo-semec.svg" alt="Logotipo da Prefeitura de Porto Velho - SEMEC" width={200} height={200} className="object-contain" style={{ width: '200px', height: '200px' }} />
             </Link>
           </div>
 
