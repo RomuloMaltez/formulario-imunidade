@@ -29,7 +29,7 @@ export default function FormularioPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Tipo de imunidade inválido</h1>
-          <Link href="/">
+          <Link href="https://servicos.portovelho.ro.gov.br/semec/formulario-imunidade">
             <Button>Voltar para página inicial</Button>
           </Link>
         </div>
@@ -82,7 +82,7 @@ export default function FormularioPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Navigation & Title */}
         <div className="mb-8">
-          <Link href="/">
+          <Link href="https://servicos.portovelho.ro.gov.br/semec/formulario-imunidade">
             <Button variant="outline" className="mb-6 hover:bg-slate-100 transition-colors">
               ← Voltar para a página inicial
             </Button>
